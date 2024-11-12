@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
@@ -9,10 +10,29 @@ namespace TagsCloudVisualization;
 [TestFixture]
 public class CircularCloudLayouterTests
 {
+    CircularCloudLayouter circularCloudLayouter;
+
+    [TearDown]
+    public void TearDown()
+    {
+        var outputDirectory = $"{TestContext.CurrentContext.WorkDirectory}\\..\\..\\Failures";
+        Directory.CreateDirectory(outputDirectory);
+
+        if (TestContext.CurrentContext.Result.Outcome.Status == NUnit.Framework.Interfaces.TestStatus.Failed)
+        {
+            var testName = TestContext.CurrentContext.Test.Name;
+            var imagePath = Path.Combine(outputDirectory, $"{testName}_.png");
+            LayoutVisualizer.SaveLayoutImage(circularCloudLayouter, imagePath, 700, 700);
+
+            TestContext.WriteLine($"Tag cloud visualization saved to file {imagePath}");
+        }
+    }
+
     [Test]
     public void Constructor_SetCenterCorrectly_WhenInitialized()
     {
         var center = new Point(-5, 2);
+        circularCloudLayouter = new CircularCloudLayouter(center);
         var cloudCenter = new CircularCloudLayouter(center).Center;
 
         cloudCenter.Should().Be(center);
@@ -21,7 +41,7 @@ public class CircularCloudLayouterTests
     [Test]
     public void CloudSizeIsZero_WhenInitialized()
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
 
         var actualSize = circularCloudLayouter.Size();
 
@@ -31,8 +51,8 @@ public class CircularCloudLayouterTests
     [Test]
     public void CloudSizeEqualsFirstTagSize_WhenPuttingFirstTag()
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
-        var rectangleSize = new Size(10, 8);
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        var rectangleSize = new Size(40, 20);
 
         circularCloudLayouter.PutNextRectangle(rectangleSize);
 
@@ -45,8 +65,8 @@ public class CircularCloudLayouterTests
     [Test]
     public void CloudSizeIsCloseToCircleShape_WhenPuttingManyTags()
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
-        var rectangleSize = new Size(3, 2);
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        var rectangleSize = new Size(30, 12);
 
         for (var i = 0; i < 100; i++)
         {
@@ -64,8 +84,8 @@ public class CircularCloudLayouterTests
     [TestCase(10, TestName = "MultipleTags_WhenPuttingALotOfTags")]
     public void CloudContains(int rectangleCount)
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
-        var rectangleSize = new Size(5, 3);
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        var rectangleSize = new Size(45, 17);
 
         for (var i = 0; i < rectangleCount; i++)
         {
@@ -81,19 +101,19 @@ public class CircularCloudLayouterTests
     [TestCase(1, -1, TestName = "HeightIsNegative")]
     public void PutNextRectangle_ThrowException_When(int width, int height)
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
         var incorrectRectangle = new Size(width, height);
         var putIncorrectRectangle = () => circularCloudLayouter.PutNextRectangle(incorrectRectangle);
 
         putIncorrectRectangle.Should().Throw<ArgumentException>();
     }
 
-    [TestCase(8, 4, TestName = "LengthOfSidesRectangleIsEven")]
-    [TestCase(9, 5, TestName = "LengthOfSidesRectangleIsOdd")]
+    [TestCase(100, 50, TestName = "LengthOfSidesRectangleIsEven")]
+    [TestCase(117, 63, TestName = "LengthOfSidesRectangleIsOdd")]
     public void PutNextRectangle_PlacesFirstRectangleInCenter_When(int width, int height)
     {
         var center = new Point(3, -2);
-        var circularCloudLayouter = new CircularCloudLayouter(center);
+        circularCloudLayouter = new CircularCloudLayouter(center);
         var rectangleSize = new Size(width, height);
         var firstRectangle = circularCloudLayouter.PutNextRectangle(rectangleSize);
 
@@ -107,10 +127,10 @@ public class CircularCloudLayouterTests
     [Test]
     public void PutNextRectangle_CloudTagsIsNotIntersect_WhenPuttingALotOfTags()
     {
-        var circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
-        circularCloudLayouter.PutNextRectangle(new Size(10, 5));
-        circularCloudLayouter.PutNextRectangle(new Size(9, 6));
-        circularCloudLayouter.PutNextRectangle(new Size(8, 4));
+        circularCloudLayouter = new CircularCloudLayouter(Point.Empty);
+        circularCloudLayouter.PutNextRectangle(new Size(50, 25));
+        circularCloudLayouter.PutNextRectangle(new Size(60, 30));
+        circularCloudLayouter.PutNextRectangle(new Size(40, 20));
 
         var tags = circularCloudLayouter.Tags;
         for (var i = 0; i < tags.Count; i++)

@@ -10,7 +10,7 @@ public class LayoutVisualizer
     {
         var rectangleCounts = new List<int>{ 25, 50, 100 };
 
-        var outputDirectory = "../../Layouts";
+        var outputDirectory = "..\\..\\Layouts";
         Directory.CreateDirectory(outputDirectory);
 
         for (int i = 0; i < rectangleCounts.Count; i++)
@@ -45,15 +45,20 @@ public class LayoutVisualizer
         return layouter;
     }
 
-    private static void SaveLayoutImage(CircularCloudLayouter layout, string filePath, int width, int height)
+    public static void SaveLayoutImage(CircularCloudLayouter layout, string filePath, int width, int height)
     {
         using var bitmap = new Bitmap(width, height);
         using var graphics = Graphics.FromImage(bitmap);
+
         graphics.Clear(Color.White);
         var pen = new Pen(Color.Blue, 2);
 
+        var centerBitmap = new Point(width / 2, height / 2);
+        var offsetBitmap = new Point(centerBitmap.X - layout.Center.X, centerBitmap.Y - layout.Center.Y);
+
         foreach (var rectangle in layout.Tags)
         {
+            rectangle.Offset(offsetBitmap);
             graphics.DrawRectangle(pen, rectangle);
         }
 
