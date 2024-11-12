@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	<TargetFramework>net48</TargetFramework>
+	<LangVersion>10.0</LangVersion>
+	<OutputType>Exe</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <RootNamespace>TagsCloudVisualization</RootNamespace>
     <Nullable>enable</Nullable>
