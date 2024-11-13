@@ -9,13 +9,13 @@ public class CircularCloudLayouter
 {
     public readonly Point Center;
     public List<Rectangle> Tags { get; }
-    private readonly Spiral spiral;
+    private readonly ArchimedeanSpiral spiral;
 
     public CircularCloudLayouter(Point center)
     {
         Center = center;
         Tags = new List<Rectangle>();
-        spiral = new Spiral(center);
+        spiral = new ArchimedeanSpiral(center);
     }
 
     public Rectangle PutNextRectangle(Size rectangleSize)
@@ -33,7 +33,7 @@ public class CircularCloudLayouter
             location.Offset(-rectangleSize.Width / 2, rectangleSize.Height / 2);
             newRectangle = new Rectangle(location, rectangleSize);
         }
-        while (IsIntersectsWithAny(newRectangle));
+        while (Tags.IsIntersectsWithAny(newRectangle));
 
         newRectangle = ShiftRectangleToCenter(newRectangle);
         Tags.Add(newRectangle);
@@ -53,16 +53,13 @@ public class CircularCloudLayouter
         return new Size(right - left, bottom - top);
     }
 
-    private bool IsIntersectsWithAny(Rectangle rectangle) =>
-        Tags.IsIntersectsWithAny(rectangle);
-
     private Rectangle ShiftRectangleToCenter(Rectangle rectangle)
     {
         var directionToCenter = GetDirectionToCenter(rectangle);
         while (directionToCenter != Point.Empty)
         {
             var nextRectangle = MoveRectangle(rectangle, directionToCenter);
-            if (IsIntersectsWithAny(nextRectangle))
+            if (Tags.IsIntersectsWithAny(nextRectangle))
                 break;
 
             rectangle = nextRectangle;

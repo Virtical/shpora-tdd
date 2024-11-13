@@ -13,7 +13,7 @@ public class LayoutVisualizer
         var outputDirectory = "..\\..\\Layouts";
         Directory.CreateDirectory(outputDirectory);
 
-        for (int i = 0; i < rectangleCounts.Count; i++)
+        for (var i = 0; i < rectangleCounts.Count; i++)
         {
             var count = rectangleCounts[i];
 
@@ -33,10 +33,10 @@ public class LayoutVisualizer
     {
         var random = new Random();
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
-            int height = random.Next(20, 40);
-            int width = (int)(height * (2 + random.NextDouble()));
+            var height = random.Next(20, 40);
+            var width = (int)(height * (2 + random.NextDouble()));
             var rectangleSize = new Size(width, height);
 
             layouter.PutNextRectangle(rectangleSize);
@@ -72,7 +72,7 @@ public class LayoutVisualizer
         writer.WriteLine("# Layout Visualization");
         writer.WriteLine();
 
-        for (int i = 1; i <= layoutCount; i++)
+        for (var i = 1; i <= layoutCount; i++)
         {
             writer.WriteLine($"## Layout {i}");
             writer.WriteLine($"![Layout {i}](layout_{i}.png)");

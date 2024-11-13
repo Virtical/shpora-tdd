@@ -3,13 +3,13 @@ using System.Drawing;
 
 namespace TagsCloudVisualization;
 
-public class Spiral
+public class ArchimedeanSpiral
 {
     private readonly Point center;
     private double angle;
     private readonly double spiralStep;
 
-    public Spiral(Point center, double spiralStep = 0.1)
+    public ArchimedeanSpiral(Point center, double spiralStep = 0.1)
     {
         this.center = center;
         this.spiralStep = spiralStep;
